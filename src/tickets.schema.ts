@@ -7,9 +7,6 @@ export type TicketDocument = Ticket & Document;
 export class Ticket {
 
   @Prop({ required: true })
-  numeroReporte: number;
-
-  @Prop({ required: true })
   fechaReporte: Date;
 
   @Prop({ required: true })
@@ -27,7 +24,7 @@ export class Ticket {
   @Prop()
   responsable?: string;
 
-  @Prop({ default: 'Pendiente' })
+  @Prop({ default: 'sin-asignar' })
   estatus: string;
 
   @Prop()

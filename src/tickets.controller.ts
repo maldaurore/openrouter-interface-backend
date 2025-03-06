@@ -8,14 +8,13 @@ export class TicketsController {
 
   @Get()
   async getTickets(
-    @Query('idCliente') idCliente?: string,
+    @Query('nombreCliente') nombreCliente?: string,
     @Query('estatus') estatus?: string,
-    @Query('personaAsignada') personaAsignada?: string,
+    @Query('responsable') responsable?: string,
     @Query('tipoIncidencia') tipoIncidencia?: string,
-    @Query('fechaInicio') fechaInicio?: string,
-    @Query('fechaFin') fechaFin?: string,
+    @Query('fechaReporte') fechaReporte?: string,
   ): Promise<Ticket[]> {
-    return this.ticketsService.getTickets({ idCliente, estatus, personaAsignada, tipoIncidencia, fechaInicio, fechaFin });
+    return this.ticketsService.getTickets({ nombreCliente, estatus, responsable, tipoIncidencia, fechaReporte });
   }
 
   @Post('asignar/:id')

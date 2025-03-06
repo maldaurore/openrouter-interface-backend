@@ -8,7 +8,16 @@ export class TicketsService {
   constructor(@InjectModel(Ticket.name) private ticketModel: Model<TicketDocument>) {}
 
   async getTickets(filters: any): Promise<Ticket[]> {
-    return this.ticketModel.find(filters).exec();
+
+    const mongoFilters: any = {};
+
+    if (filters.nombreCliente) mongoFilters.clienteNombre = filters.nombreCliente;
+    if (filters.estatus) mongoFilters.estatus = filters.estatus;
+    if (filters.responsable) mongoFilters.responsable = filters.responsable;
+    if (filters.tipoIncidencia) mongoFilters.tipoIncidencia = filters.tipoIncidencia;
+    if (filters.fechaReporte) mongoFilters.fechaReporte = new Date(filters.fechaReporte);
+
+    return this.ticketModel.find(mongoFilters).exec();
   }
 
   async asignarTicket(id: string, responsable: string): Promise<Ticket | null> {

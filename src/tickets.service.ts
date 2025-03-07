@@ -9,7 +9,7 @@ export class TicketsService {
 
   async getTickets(filters: any): Promise<Ticket[]> {
 
-    const mongoFilters: any = {};
+    let mongoFilters: any = {};
 
     if (filters.nombreCliente) mongoFilters.clienteNombre = filters.nombreCliente;
     if (filters.estatus) mongoFilters.estatus = filters.estatus;
@@ -17,6 +17,9 @@ export class TicketsService {
     if (filters.tipoIncidencia) mongoFilters.tipoIncidencia = filters.tipoIncidencia;
     if (filters.fechaReporte) mongoFilters.fechaReporte = new Date(filters.fechaReporte);
 
+    if (filters.id) mongoFilters = { _id: filters.id };
+
+    console.log(mongoFilters);
     return this.ticketModel.find(mongoFilters).exec();
   }
 

@@ -1,12 +1,14 @@
-import { Controller, Get, Post, Body, Query, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Param, UseGuards } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { Ticket } from './tickets.schema';
+import { JwtAuthGuard } from './JwtAuthGuard';
 
 @Controller('TicketsSoporte')
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async getTickets(
     @Query('id') id?: string,
     @Query('nombreCliente') nombreCliente?: string,

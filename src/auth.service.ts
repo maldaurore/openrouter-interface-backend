@@ -34,4 +34,24 @@ export class AuthService {
     };
   }
 
+  async refresh(refreshToken: string) {
+    try {
+      const payload = this.jwtService.verify(refreshToken, 
+        {
+          secret: process.env.JWT_SECRET || 'zafiro_support_tickets_secret'
+        }
+      );
+
+      const newPayload = {
+        sub: payload.sub,
+        username: payload.username,
+      }
+      return {
+        access_token: this.jwtService.sign(newPayload),
+      };
+    } catch (e) {
+      throw new HttpException('Token de refresco inválido', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
 }

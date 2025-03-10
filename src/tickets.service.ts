@@ -19,7 +19,6 @@ export class TicketsService {
 
     if (filters.id) mongoFilters = { _id: filters.id };
 
-    console.log(mongoFilters);
     return this.ticketModel.find(mongoFilters).exec();
   }
 

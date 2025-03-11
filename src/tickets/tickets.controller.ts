@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Query, Param, UseGuards } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { Ticket } from './tickets.schema';
-import { JwtAuthGuard } from './JwtAuthGuard';
+import { JwtAuthGuard } from '../JwtAuthGuard';
 
 @Controller('TicketsSoporte')
 export class TicketsController {

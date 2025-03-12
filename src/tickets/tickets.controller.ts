@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Query, Param, UseGuards } from '@nestjs/co
 import { TicketsService } from './tickets.service';
 import { Ticket } from './tickets.schema';
 import { JwtAuthGuard } from '../JwtAuthGuard';
+import { Responsable } from './responsable.schema';
+import { response } from 'express';
 
 @Controller('TicketsSoporte')
 export class TicketsController {
@@ -21,7 +23,7 @@ export class TicketsController {
   }
 
   @Post('asignar/:id')
-  async asignarTicket(@Param('id') id: string, @Body('responsable') responsable: string) {
+  async asignarTicket(@Param('id') id: string, @Body('responsable') responsable: Responsable) {
     return this.ticketsService.asignarTicket(id, responsable);
   }
 

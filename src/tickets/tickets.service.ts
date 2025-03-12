@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Ticket, TicketDocument } from './tickets.schema';
+import { Responsable } from './responsable.schema';
 
 @Injectable()
 export class TicketsService {
@@ -22,8 +23,8 @@ export class TicketsService {
     return this.ticketModel.find(mongoFilters).exec();
   }
 
-  async asignarTicket(id: string, responsable: string): Promise<Ticket | null> {
-    return this.ticketModel.findByIdAndUpdate(id, { responsable, estatus: 'Asignado' }, { new: true }).exec();
+  async asignarTicket(id: string, responsable: Responsable): Promise<Ticket | null> {
+    return this.ticketModel.findByIdAndUpdate(id, { responsable, estatus: 'asignado' }, { new: true }).exec();
   }
 
   async solucionarTicket(id: string, solucion: string): Promise<Ticket | null> {

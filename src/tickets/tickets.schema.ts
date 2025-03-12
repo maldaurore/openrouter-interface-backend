@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Responsable, ResponsableSchema } from './responsable.schema';
 
 export type TicketDocument = Ticket & Document;
 
@@ -21,8 +22,8 @@ export class Ticket {
   @Prop({ required: true })
   tipoIncidencia: string;
 
-  @Prop()
-  responsable?: string;
+  @Prop({ type: { _id: String, nombre: String } })
+  responsable?: Responsable;
 
   @Prop({ default: 'sin-asignar' })
   estatus: string;

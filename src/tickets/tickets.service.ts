@@ -28,10 +28,10 @@ export class TicketsService {
   }
 
   async solucionarTicket(id: string, solucion: string): Promise<Ticket | null> {
-    return this.ticketModel.findByIdAndUpdate(id, { solucion, estatus: 'Solucionado', fechaSolucion: new Date() }, { new: true }).exec();
+    return this.ticketModel.findByIdAndUpdate(id, { solucion, estatus: 'resuelto', fechaSolucion: new Date() }, { new: true }).exec();
   }
 
   async marcarSinSolucion(id: string, notasRechazo: string): Promise<Ticket | null> {
-    return this.ticketModel.findByIdAndUpdate(id, { estatus: 'Sin Solución', fechaRechazo: new Date(), notasRechazo }, { new: true }).exec();
+    return this.ticketModel.findByIdAndUpdate(id, { estatus: 'rechazado', fechaRechazo: new Date(), notasRechazo }, { new: true }).exec();
   }
 }

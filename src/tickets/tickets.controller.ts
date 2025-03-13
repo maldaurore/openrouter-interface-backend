@@ -3,7 +3,6 @@ import { TicketsService } from './tickets.service';
 import { Ticket } from './tickets.schema';
 import { JwtAuthGuard } from '../JwtAuthGuard';
 import { Responsable } from './responsable.schema';
-import { response } from 'express';
 
 @Controller('TicketsSoporte')
 export class TicketsController {

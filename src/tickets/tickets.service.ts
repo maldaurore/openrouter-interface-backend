@@ -14,7 +14,7 @@ export class TicketsService {
 
     if (filters.nombreCliente) mongoFilters.clienteNombre = filters.nombreCliente;
     if (filters.estatus) mongoFilters.estatus = filters.estatus;
-    if (filters.responsable) mongoFilters.responsable = filters.responsable;
+    if (filters.responsable) mongoFilters["responsable._id"] = filters.responsable;
     if (filters.tipoIncidencia) mongoFilters.tipoIncidencia = filters.tipoIncidencia;
     if (filters.fechaReporte) mongoFilters.fechaReporte = new Date(filters.fechaReporte);
 

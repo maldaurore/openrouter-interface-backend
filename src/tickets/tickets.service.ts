@@ -20,7 +20,11 @@ export class TicketsService {
 
     if (filters.id) mongoFilters = { _id: filters.id };
 
-    return this.ticketModel.find(mongoFilters).exec();
+    return this.ticketModel.
+    find(mongoFilters)
+    .skip((filters.page - 1) * filters.limit)
+    .limit(filters.limit)
+    .exec();
   }
 
   async asignarTicket(id: string, responsable: Responsable): Promise<Ticket | null> {

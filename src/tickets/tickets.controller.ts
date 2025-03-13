@@ -17,8 +17,10 @@ export class TicketsController {
     @Query('responsable') responsable?: string,
     @Query('tipoIncidencia') tipoIncidencia?: string,
     @Query('fechaReporte') fechaReporte?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ): Promise<Ticket[]> {
-    return this.ticketsService.getTickets({ id, nombreCliente, estatus, responsable, tipoIncidencia, fechaReporte });
+    return this.ticketsService.getTickets({ id, nombreCliente, estatus, responsable, tipoIncidencia, fechaReporte, page, limit });
   }
 
   @Put('asignar/:id')

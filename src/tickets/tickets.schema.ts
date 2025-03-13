@@ -41,7 +41,7 @@ export class Ticket {
   notasRechazo?: string;
 
   @Prop()
-  notasInternas?: string;
+  notasInternas?: Array<string>;
 }
 
 export const TicketSchema = SchemaFactory.createForClass(Ticket);

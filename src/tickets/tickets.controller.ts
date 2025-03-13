@@ -36,4 +36,9 @@ export class TicketsController {
   async marcarSinSolucion(@Param('id') id: string, @Body('notasRechazo') notasRechazo: string) {
     return this.ticketsService.marcarSinSolucion(id, notasRechazo);
   }
+
+  @Put('agregarNota/:id')
+  async agregarNote(@Param('id') id: string, @Body('nota') nota: string) {
+    return this.ticketsService.agregarNota(id, nota);
+  }
 }

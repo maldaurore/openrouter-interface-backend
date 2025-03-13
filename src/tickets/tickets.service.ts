@@ -34,4 +34,8 @@ export class TicketsService {
   async marcarSinSolucion(id: string, notasRechazo: string): Promise<Ticket | null> {
     return this.ticketModel.findByIdAndUpdate(id, { estatus: 'rechazado', fechaRechazo: new Date(), notasRechazo }, { new: true }).exec();
   }
+
+  async agregarNota(id: string, nota: string): Promise<Ticket | null> {
+    return this.ticketModel.findByIdAndUpdate(id, { $push: { notasInternas: nota } }, { new: true }).exec();
+  }
 }

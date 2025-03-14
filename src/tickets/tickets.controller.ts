@@ -19,7 +19,7 @@ export class TicketsController {
     @Query('fechaReporte') fechaReporte?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
-  ): Promise<Ticket[]> {
+  ): Promise<{ tickets: Ticket[], total: number }> {
     return this.ticketsService.getTickets({ id, nombreCliente, estatus, responsable, tipoIncidencia, fechaReporte, page, limit });
   }
 

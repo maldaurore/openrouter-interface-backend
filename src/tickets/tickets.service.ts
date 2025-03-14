@@ -8,7 +8,7 @@ import { Responsable } from './responsable.schema';
 export class TicketsService {
   constructor(@InjectModel(Ticket.name) private ticketModel: Model<TicketDocument>) {}
 
-  async getTickets(filters: any): Promise<Ticket[]> {
+  async getTickets(filters: any): Promise<{ tickets: Ticket[], total: number }> {
 
     let mongoFilters: any = {};
 
@@ -20,11 +20,14 @@ export class TicketsService {
 
     if (filters.id) mongoFilters = { _id: filters.id };
 
-    return this.ticketModel.
-    find(mongoFilters)
+    const total = await this.ticketModel.countDocuments(mongoFilters).exec();
+    const tickets = await this.ticketModel
+    .find(mongoFilters)
     .skip((filters.page - 1) * filters.limit)
     .limit(filters.limit)
     .exec();
+
+    return { tickets, total }
   }
 
   async asignarTicket(id: string, responsable: Responsable): Promise<Ticket | null> {

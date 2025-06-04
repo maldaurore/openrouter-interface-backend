@@ -11,7 +11,7 @@ import { JwtStrategy } from '../jwt.strategy';
     UsersModule,
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'zafiro_support_tickets_secret',
+      secret: process.env.JWT_SECRET || 'zafiro_ai_chat_secret',
       signOptions: { expiresIn: '1h' },
     }),
   ],

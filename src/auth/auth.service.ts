@@ -11,21 +11,21 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async register(username: string, password: string, name: string) {
-    const existingUser = await this.usersService.findByUsername(username);
+  async register(email: string, password: string, name: string, chats: string[]) {
+    const existingUser = await this.usersService.findByEmail(email);
     if (existingUser) {
       throw new HttpException('El nombre de usuario ya está en uso', HttpStatus.BAD_REQUEST);
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    return this.usersService.createUser(username, hashedPassword, name);
+    return this.usersService.createUser(email, hashedPassword, name, chats);
   }
 
-  async login(username: string, password: string) {
-    const user = await this.usersService.findByUsername(username);
+  async login(email: string, password: string) {
+    const user = await this.usersService.findByEmail(email);
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new HttpException('Nombre de usuario o contraseña incorrectos', HttpStatus.UNAUTHORIZED);
     }
-    const payload = { sub: user._id, username: user.username };
+    const payload = { sub: user._id, email: user.email };
     return {
       access_token: this.jwtService.sign(payload),
       refresh_token: this.jwtService.sign(payload, { expiresIn: '7d' }),
@@ -38,13 +38,13 @@ export class AuthService {
     try {
       const payload = this.jwtService.verify(refreshToken, 
         {
-          secret: process.env.JWT_SECRET || 'zafiro_support_tickets_secret'
+          secret: process.env.JWT_SECRET || 'zafiro_ai_chat_secret'
         }
       );
 
       const newPayload = {
         sub: payload.sub,
-        username: payload.username,
+        email: payload.email,
       }
       return {
         access_token: this.jwtService.sign(newPayload),

@@ -44,4 +44,20 @@ export class ChatsService {
     }
     return chat;
   }
+
+  async updateChatMessages(chatId: string, userId: string, newMessages: Message[]): Promise<void> {
+    const chat = await this.chatModel.findOne({_id: chatId, user:userId}).exec()
+    if (!chat) {
+      throw new Error(`Chat with ID ${chatId} not found`);
+    }
+
+    chat.messages = chat.messages.concat(newMessages);
+
+    try {
+      await chat.save()
+    } catch (error) {
+      console.error("Error updating chat messages:", error);
+      throw new Error("Failed to update chat messages");
+    }
+  }
 }

@@ -19,6 +19,9 @@ export class Chat {
   @Prop({ required: true })
   model: string;
 
+  @Prop()
+  threadId: string;
+
   @Prop({ required: true })
   createdAt: number;
   

@@ -30,9 +30,9 @@ export class ChatsController {
   @UseGuards(JwtAuthGuard)
   async createChat(
     @CurrentUserId() userId: string,
-    @Body() { title, messages, model }
+    @Body() { title, messages, model, threadId }
     ): Promise<{ chat: Chat }> {
-    const chat = await this.chatsService.createChat(userId, title, messages, model);
+    const chat = await this.chatsService.createChat(userId, title, messages, model, threadId);
     return { chat };
   }
 

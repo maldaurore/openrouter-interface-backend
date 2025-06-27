@@ -17,12 +17,13 @@ export class ChatsService {
       .exec();
   }
 
-  async createChat(userId: string, title: string, messages: Message[], model: string): Promise<Chat> {
+  async createChat(userId: string, title: string, messages: Message[], model: string, threadId: string | null = null): Promise<Chat> {
     const chat = new this.chatModel({
       title,
       messages,
       user: userId,
       model,
+      threadId,
       createdAt: Date.now()
     });
     try {

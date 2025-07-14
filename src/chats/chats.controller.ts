@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 import { ChatsService } from "./chats.service";
 import { Chat } from "./chats.schema";
 import { JwtAuthGuard } from "src/JwtAuthGuard";
@@ -26,22 +26,13 @@ export class ChatsController {
     return { chat };
   }
 
-  @Post('new-chat')
   @UseGuards(JwtAuthGuard)
-  async createChat(
+  @Post('get-response')
+  async getResponse(
+    @Body() { chatId, chatType, message, model },
     @CurrentUserId() userId: string,
-    @Body() { title, messages, model, threadId }
-    ): Promise<{ chat: Chat }> {
-    const chat = await this.chatsService.createChat(userId, title, messages, model, threadId);
-    return { chat };
+    ) {
+    return this.chatsService.getResponse(chatId, chatType, message, model, userId);
   }
 
-  @Put('update-chat-messages')
-  @UseGuards(JwtAuthGuard)
-  async updateChatMessages(
-    @CurrentUserId() userId: string,
-    @Body() { chatId, messages }
-  ): Promise<void> {
-    await this.chatsService.updateChatMessages(chatId, userId, messages);
-  }
 }

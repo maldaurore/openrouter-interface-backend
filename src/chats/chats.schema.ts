@@ -7,6 +7,9 @@ export type ChatDocument = Chat & Document;
 @Schema()
 export class Chat {
 
+  @Prop()
+  _id: string;
+
   @Prop({ required: true })
   title: string;
 
@@ -18,9 +21,6 @@ export class Chat {
 
   @Prop({ required: true })
   model: string;
-
-  @Prop()
-  threadId: string;
 
   @Prop({ required: true })
   createdAt: number;

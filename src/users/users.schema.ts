@@ -18,6 +18,9 @@ export class User {
   @Prop({ required: true })
   chats: string[];
 
+  @Prop({ required: true })
+  availableModels: string[];
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

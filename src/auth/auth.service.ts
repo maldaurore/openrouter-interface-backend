@@ -11,13 +11,13 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async register(email: string, password: string, name: string, chats: string[]) {
+  async register(email: string, password: string, name: string) {
     const existingUser = await this.usersService.findByEmail(email);
     if (existingUser) {
       throw new HttpException('El nombre de usuario ya está en uso', HttpStatus.BAD_REQUEST);
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    return this.usersService.createUser(email, hashedPassword, name, chats);
+    return this.usersService.createUser(email, hashedPassword, name);
   }
 
   async login(email: string, password: string) {

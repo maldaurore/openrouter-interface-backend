@@ -4,12 +4,12 @@ import { UpdateModelDto } from './dto/update-model.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model as ModelClass, ModelDocument } from './schemas/model.schema';
 import { Model } from 'mongoose';
-import { User, UserDocument } from '../users/users.schema';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class ModelsService {
   constructor (
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private readonly usersService: UsersService,
     @InjectModel(ModelClass.name) private modelModel: Model<ModelDocument>
   ) {}
 
@@ -27,7 +27,7 @@ export class ModelsService {
   }
 
   async findUserModels(userId: string): Promise<ModelClass[]> {
-    const user = await this.userModel.findById(userId).exec();
+    const user = await this.usersService.findById(userId);
 
     if (!user) {
       throw new NotFoundException(`Usuario con ID ${userId} no encontrado.`)

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Chat, ChatDocument } from "./chats.schema";
-import mongoose, { Model } from "mongoose";
+import { Model } from "mongoose";
 import { Message } from "./message.schema";
 import OpenAI from "openai";
 import { ChatType, Sender } from "types";

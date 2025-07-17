@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import { NewUserDto } from './dto/new-user.dto';
 
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -40,7 +41,7 @@ export class AuthService {
     try {
       const payload = this.jwtService.verify(refreshToken, 
         {
-          secret: process.env.JWT_SECRET || 'zafiro_ai_chat_secret'
+          secret: process.env.JWT_SECRET
         }
       );
 

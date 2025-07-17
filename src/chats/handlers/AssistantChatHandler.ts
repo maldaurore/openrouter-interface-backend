@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { IChatHander } from "./IChatHandler";
-import { Message } from "../message.schema";
+import { Message } from "../schemas/message.schema";
 import { Sender } from "types";
 import { Inject, Injectable } from "@nestjs/common";
 

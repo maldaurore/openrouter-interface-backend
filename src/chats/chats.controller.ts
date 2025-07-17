@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { ChatsService } from "./chats.service";
-import { Chat } from "./chats.schema";
+import { Chat } from "./schemas/chats.schema";
 import { JwtAuthGuard } from "src/JwtAuthGuard";
 import { CurrentUserId } from "src/decorators/current-user-id.decorator";
+import { GetResponseDto } from "./dto/get-response.dto";
 
 @Controller('chats')
 export class ChatsController {
@@ -28,11 +29,12 @@ export class ChatsController {
 
   @UseGuards(JwtAuthGuard)
   @Post('get-response')
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   async getResponse(
-    @Body() { chatId, chatType, message, model },
+    @Body() getResponseDto: GetResponseDto,
     @CurrentUserId() userId: string,
     ) {
-    return this.chatsService.getResponse(chatId, chatType, message, model, userId);
+    return this.chatsService.getResponse(getResponseDto, userId);
   }
 
 }

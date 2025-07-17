@@ -1,5 +1,5 @@
 import { Sender } from "types";
-import { Message } from "../message.schema";
+import { Message } from "../schemas/message.schema";
 import { IChatHander } from "./IChatHandler";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";

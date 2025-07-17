@@ -1,10 +1,10 @@
 import OpenAI from "openai";
 import { IChatHander } from "./IChatHandler";
-import { Message } from "../message.schema";
+import { Message } from "../schemas/message.schema";
 import { EasyInputMessage } from "openai/resources/responses/responses";
 import { Sender } from "types";
 import { InjectModel } from "@nestjs/mongoose";
-import { Chat, ChatDocument } from "../chats.schema";
+import { Chat, ChatDocument } from "../schemas/chats.schema";
 import { Model } from "mongoose";
 import { Inject, Injectable } from "@nestjs/common";
 

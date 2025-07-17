@@ -1,5 +1,5 @@
-import { Message } from "../message.schema";
+import { Message } from "../schemas/message.schema";
 
 export interface IChatHander {
-  getResponse(chatId: string, message: Message, model: string): Promise<{chatId: string, response: Message}>;
+  getResponse(chatId: string | undefined, message: Message, model: string): Promise<{chatId: string, response: Message}>;
 }

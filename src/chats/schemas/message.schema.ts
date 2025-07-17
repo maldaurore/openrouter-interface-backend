@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Sender } from "types";
 
 @Schema()
 export class Message {
@@ -9,7 +10,7 @@ export class Message {
   text: string;
 
   @Prop({ required: true })
-  sender: string;
+  sender: Sender;
 
   @Prop({ required: true })
   timestamp: number;

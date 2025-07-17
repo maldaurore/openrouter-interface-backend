@@ -1,12 +1,13 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Chat, ChatDocument } from "./chats.schema";
+import { Chat, ChatDocument } from "./schemas/chats.schema";
 import { Model } from "mongoose";
-import { Message } from "./message.schema";
+import { Message } from "./schemas/message.schema";
 import OpenAI from "openai";
 import { ChatType, Sender } from "types";
 import { ChatHandlerFactory } from "./handlers/ChatHandlerFactory";
 import { generateId } from "./utils/chats.utils";
+import { GetResponseDto } from "./dto/get-response.dto";
 
 @Injectable()
 export class ChatsService {
@@ -73,7 +74,7 @@ export class ChatsService {
       throw new Error(`Chat with ID ${chatId} not found`);
     }
     if (chat.user !== userId) {
-      throw new Error(`Chat with ID ${chatId} does not belong to user ${userId}`);
+      throw new UnauthorizedException(`Chat with ID ${chatId} does not belong to user ${userId}`);
     }
     return chat;
   }
@@ -95,13 +96,13 @@ export class ChatsService {
   }
 
   async getResponse(
-    chatId: string, 
-    chatType: ChatType, 
-    message: Message, 
-    model: string, 
+    getResponseDto: GetResponseDto, 
     userId: string
   ): Promise<{newChatId: string, newChatTitle: string, response: Message} | undefined> {
     
+    let chatId = getResponseDto.chatId;
+    const { chatType, message, model } = getResponseDto;
+
     const handler = this.chatHandlerFactory.getHandler(chatType);
 
     let chat: Chat | null = null;

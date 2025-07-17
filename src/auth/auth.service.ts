@@ -3,6 +3,8 @@ import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from './dto/login.dto';
+import { NewUserDto } from './dto/new-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -11,18 +13,18 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async register(email: string, password: string, name: string) {
-    const existingUser = await this.usersService.findByEmail(email);
+  async register(newUserDto: NewUserDto) {
+    const existingUser = await this.usersService.findByEmail(newUserDto.email);
     if (existingUser) {
       throw new HttpException('El nombre de usuario ya está en uso', HttpStatus.BAD_REQUEST);
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    return this.usersService.createUser(email, hashedPassword, name);
+    const hashedPassword = await bcrypt.hash(newUserDto.password, 10);
+    return this.usersService.createUser(newUserDto.email, hashedPassword, newUserDto.name);
   }
 
-  async login(email: string, password: string) {
-    const user = await this.usersService.findByEmail(email);
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+  async login(loginDto: LoginDto) {
+    const user = await this.usersService.findByEmail(loginDto.email);
+    if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
       throw new HttpException('Nombre de usuario o contraseña incorrectos', HttpStatus.UNAUTHORIZED);
     }
     const payload = { sub: user._id, email: user.email };

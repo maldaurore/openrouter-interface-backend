@@ -8,10 +8,12 @@ import { ChatHandlerFactory } from './handlers/ChatHandlerFactory';
 import { AssistantChatHandler } from './handlers/AssistantChatHandler';
 import { braianChatHandler } from './handlers/BraianChatHandler';
 import { OpenAIProvider } from './providers/openai.provider';
+import { ChatModelsModule } from 'src/chat-models/chat-models.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }])
+    MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]),
+    ChatModelsModule
   ],
   providers: [
     OpenAIProvider,

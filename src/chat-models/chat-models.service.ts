@@ -26,6 +26,10 @@ export class ModelsService {
     return this.modelModel.findById(_id).exec();
   }
 
+  async findByModelId(modelId: string): Promise<ModelClass | null> {
+    return this.modelModel.findOne({modelId});
+  }
+
   async findUserModels(userId: string): Promise<ModelClass[]> {
     const user = await this.usersService.findById(userId);
 

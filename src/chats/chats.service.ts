@@ -8,6 +8,7 @@ import { ChatType, Sender } from "types";
 import { ChatHandlerFactory } from "./handlers/ChatHandlerFactory";
 import { generateId } from "./utils/chats.utils";
 import { GetResponseDto } from "./dto/get-response.dto";
+import { ModelsService } from "src/chat-models/chat-models.service";
 
 @Injectable()
 export class ChatsService {
@@ -16,6 +17,7 @@ export class ChatsService {
     @InjectModel(Chat.name) private chatModel: Model<ChatDocument>,
     @Inject('OPENAI_INSTANCE') private openai: OpenAI,
     private readonly chatHandlerFactory: ChatHandlerFactory,
+    private readonly chatModelsService: ModelsService
     ) {
     this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -50,13 +52,15 @@ export class ChatsService {
     });
 
     const title = request.output_text;
-  
+
+    const modelObject = await this.chatModelsService.findByModelId(model)
+      
     const chat = new this.chatModel({
       _id: chatId,
       title,
       messages,
       user: userId,
-      model,
+      model: modelObject,
       createdAt: Date.now()
     });
     try {

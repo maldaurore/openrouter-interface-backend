@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from 'mongoose';
 import { Message } from "./message.schema";
+import { Model, ModelSchema } from "src/chat-models/schemas/model.schema";
 
 export type ChatDocument = Chat & Document;
 
@@ -19,8 +20,8 @@ export class Chat {
   @Prop({ required: true })
   user: string;
 
-  @Prop({ required: true })
-  model: string;
+  @Prop({ type: ModelSchema, required: true })
+  model: Model;
 
   @Prop({ required: true })
   createdAt: number;

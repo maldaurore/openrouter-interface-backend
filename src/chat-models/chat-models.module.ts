@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ModelsService } from './models.service';
-import { ModelsController } from './models.controller';
+import { ModelsService } from './chat-models.service';
+import { ModelsController } from './chat-models.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Model, ModelSchema } from './schemas/model.schema';
 import { UsersModule } from 'src/users/users.module';
@@ -13,4 +13,4 @@ import { UsersModule } from 'src/users/users.module';
   controllers: [ModelsController],
   providers: [ModelsService],
 })
-export class ModelsModule {}
+export class ChatModelsModule {}

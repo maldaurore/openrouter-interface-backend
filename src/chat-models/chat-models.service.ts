@@ -22,8 +22,8 @@ export class ModelsService {
     return this.modelModel.find().exec();
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} model`;
+  async findOne(_id: string): Promise<ModelClass | null> {
+    return this.modelModel.findById(_id).exec();
   }
 
   async findUserModels(userId: string): Promise<ModelClass[]> {
@@ -33,15 +33,10 @@ export class ModelsService {
       throw new NotFoundException(`Usuario con ID ${userId} no encontrado.`)
     }
 
-    return await this.modelModel.find({_id: { $in: user.availableModels } }).exec();
+    const models = await this.modelModel.find({_id: { $in: user.availableModels } }).exec();
+    return models;
 
   }
 
-  update(id: number, updateModelDto: UpdateModelDto) {
-    return `This action updates a #${id} model`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} model`;
-  }
+  
 }

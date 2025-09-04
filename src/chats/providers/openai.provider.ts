@@ -1,10 +1,10 @@
-import OpenAI from "openai"
+import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 
-export const OpenAIProvider = {
-  provide: 'OPENAI_INSTANCE',
+export const OpenRouterProvider = {
+  provide: 'OPENROUTER_INSTANCE',
   useFactory: () => {
-    return new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+    return createOpenRouter({
+      apiKey: process.env.OPENROUTER_API_KEY,
     });
   },
 };

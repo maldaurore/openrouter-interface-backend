@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersModule } from './users/users.module';
 import { ChatsModule } from './chats/chats.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ChatModelsModule } from './chat-models/chat-models.module';
@@ -22,9 +20,7 @@ import { ChatModelsModule } from './chat-models/chat-models.module';
       inject: [ConfigService],
     }),
     ChatsModule,
-    AuthModule,
-    UsersModule,
-    ChatModelsModule
+    ChatModelsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

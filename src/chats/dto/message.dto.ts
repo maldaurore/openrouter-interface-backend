@@ -1,5 +1,5 @@
-import { IsEnum, IsNumber, IsString } from "class-validator";
-import { Sender } from "types";
+import { IsEnum, IsNumber, IsString } from 'class-validator';
+import { Sender } from 'types';
 
 export class MessageDto {
   @IsString()

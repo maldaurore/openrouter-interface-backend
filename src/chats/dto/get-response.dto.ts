@@ -1,16 +1,12 @@
-import { IsIn, IsOptional, IsString, ValidateNested } from "class-validator";
-import { MessageDto } from "./message.dto";
-import { Transform, Type } from "class-transformer";
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { MessageDto } from './message.dto';
+import { Transform, Type } from 'class-transformer';
 
 export class GetResponseDto {
-
   @IsOptional()
   @IsString()
-  @Transform(({ value }) => value === null ? undefined : value)
+  @Transform(({ value }) => (value === null ? undefined : (value as string)))
   chatId?: string;
-
-  @IsIn(['assistant', 'model', 'braian'])
-  chatType: 'assistant' | 'model' | 'braian';
 
   @ValidateNested()
   @Type(() => MessageDto)
@@ -18,5 +14,4 @@ export class GetResponseDto {
 
   @IsString()
   model: string;
-
 }

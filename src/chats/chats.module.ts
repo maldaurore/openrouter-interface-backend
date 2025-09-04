@@ -3,26 +3,15 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Chat, ChatSchema } from './schemas/chats.schema';
 import { ChatsService } from './chats.service';
 import { ChatsController } from './chats.controller';
-import { ModelChatHandler } from './handlers/ModelChatHander';
-import { ChatHandlerFactory } from './handlers/ChatHandlerFactory';
-import { AssistantChatHandler } from './handlers/AssistantChatHandler';
-import { braianChatHandler } from './handlers/BraianChatHandler';
-import { OpenAIProvider } from './providers/openai.provider';
+import { OpenRouterProvider } from './providers/openai.provider';
 import { ChatModelsModule } from 'src/chat-models/chat-models.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]),
-    ChatModelsModule
+    ChatModelsModule,
   ],
-  providers: [
-    OpenAIProvider,
-    AssistantChatHandler,
-    braianChatHandler,
-    ModelChatHandler,
-    ChatHandlerFactory,
-    ChatsService
-  ],
+  providers: [OpenRouterProvider, ChatsService],
   controllers: [ChatsController],
 })
 export class ChatsModule {}

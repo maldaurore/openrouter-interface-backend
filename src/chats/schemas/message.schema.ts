@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Sender } from "types";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Sender } from 'types';
 
 @Schema()
 export class Message {

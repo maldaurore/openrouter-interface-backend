@@ -1,33 +1,32 @@
-import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Chat, ChatDocument } from "./schemas/chats.schema";
-import { Model } from "mongoose";
-import { Message } from "./schemas/message.schema";
-import OpenAI from "openai";
-import { ChatType, Sender } from "types";
-import { ChatHandlerFactory } from "./handlers/ChatHandlerFactory";
-import { generateId } from "./utils/chats.utils";
-import { GetResponseDto } from "./dto/get-response.dto";
-import { ModelsService } from "src/chat-models/chat-models.service";
+import { Inject, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Chat, ChatDocument } from './schemas/chats.schema';
+import mongoose, { Model } from 'mongoose';
+import { Message } from './schemas/message.schema';
+import { Sender } from 'types';
+import { GetResponseDto } from './dto/get-response.dto';
+import { ModelsService } from 'src/chat-models/chat-models.service';
+import {
+  createOpenRouter,
+  OpenRouterProvider,
+} from '@openrouter/ai-sdk-provider';
+import { generateText, ModelMessage } from 'ai';
 
 @Injectable()
 export class ChatsService {
-
   constructor(
     @InjectModel(Chat.name) private chatModel: Model<ChatDocument>,
-    @Inject('OPENAI_INSTANCE') private openai: OpenAI,
-    private readonly chatHandlerFactory: ChatHandlerFactory,
-    private readonly chatModelsService: ModelsService
-    ) {
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+    @Inject('OPENROUTER_INSTANCE') private openRouter: OpenRouterProvider,
+    private readonly chatModelsService: ModelsService,
+  ) {
+    this.openRouter = createOpenRouter({
+      apiKey: process.env.OPENROUTER_API_KEY,
     });
-
   }
 
-  async getUserChats(userId: string): Promise<Chat[]> {
+  async getAllChats(): Promise<Chat[]> {
     return this.chatModel
-      .find({ user: userId })
+      .find()
       .select('_id title createdAt')
       .sort({ createdAt: -1 })
       .exec();
@@ -35,56 +34,57 @@ export class ChatsService {
 
   async createChat(
     chatId: string,
-    userId: string, 
-    messages: Message[], 
-    model: string, 
+    messages: Message[],
+    model: string,
   ): Promise<Chat> {
-    const input = messages
-      .map((m) => `${m.sender === Sender.USER ? 'Usuario' : 'IA'}: ${m.text}`)
-      .join('\n');
-
-    const request = await this.openai.responses.create({
-      model: "gpt-4o-mini",
-      input,
-      instructions: `Basado en estos mensajes del inicio de una conversación entre una persona y un chatbot, genera un breve título de máximo 8 palabras que represente el tema principal. 
+    const inputMessages: ModelMessage[] = messages.map((message) => ({
+      role: message.sender === Sender.USER ? 'user' : 'assistant',
+      content: message.text,
+    }));
+    inputMessages.unshift({
+      role: 'system',
+      content: `Basado en estos mensajes del inicio de una conversación entre una persona y un chatbot, genera un breve título de máximo 8 palabras que represente el tema principal. 
       No uses comillas ni signos de puntuación innecesarios.
-      Responde solo con el título sugerido.`
+      Responde solo con el título sugerido.`,
     });
 
-    const title = request.output_text;
+    const result = await generateText({
+      model: this.openRouter('qwen/qwen3-30b-a3b-thinking-2507'),
+      messages: inputMessages,
+    });
 
-    const modelObject = await this.chatModelsService.findByModelId(model)
-      
+    const title = result.text;
+
+    const modelObject = await this.chatModelsService.findByModelId(model);
+
     const chat = new this.chatModel({
       _id: chatId,
       title,
       messages,
-      user: userId,
       model: modelObject,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     });
     try {
       return await chat.save();
     } catch (error) {
-      console.error("Error creating chat:", error);
-      throw new Error("Failed to create chat");
+      console.error('Error creating chat:', error);
+      throw new Error('Failed to create chat');
     }
-    
   }
 
-  async getChat(chatId: string, userId: string): Promise<Chat | null> {
+  async getChat(chatId: string): Promise<Chat | null> {
     const chat = await this.chatModel.findById(chatId).exec();
     if (!chat) {
       throw new Error(`Chat with ID ${chatId} not found`);
     }
-    if (chat.user !== userId) {
-      throw new UnauthorizedException(`Chat with ID ${chatId} does not belong to user ${userId}`);
-    }
     return chat;
   }
 
-  async updateChatMessages(chatId: string, userId: string, newMessages: Message[]): Promise<void> {
-    const chat = await this.chatModel.findOne({_id: chatId, user:userId}).exec()
+  async updateChatMessages(
+    chatId: string,
+    newMessages: Message[],
+  ): Promise<void> {
+    const chat = await this.chatModel.findOne({ _id: chatId }).exec();
     if (!chat) {
       throw new Error(`Chat with ID ${chatId} not found`);
     }
@@ -92,55 +92,76 @@ export class ChatsService {
     chat.messages = chat.messages.concat(newMessages);
 
     try {
-      await chat.save()
+      await chat.save();
     } catch (error) {
-      console.error("Error updating chat messages:", error);
-      throw new Error("Failed to update chat messages");
+      console.error('Error updating chat messages:', error);
+      throw new Error('Failed to update chat messages');
     }
   }
 
   async getResponse(
-    getResponseDto: GetResponseDto, 
-    userId: string
-  ): Promise<{newChatId: string, newChatTitle: string, response: Message} | undefined> {
-    
-    let chatId = getResponseDto.chatId;
-    const { chatType, message, model } = getResponseDto;
-
-    const handler = this.chatHandlerFactory.getHandler(chatType);
+    getResponseDto: GetResponseDto,
+  ): Promise<
+    { newChatId: string; newChatTitle: string; response: Message } | undefined
+  > {
+    const chatId = getResponseDto.chatId;
+    const { message, model } = getResponseDto;
 
     let chat: Chat | null = null;
+    let messages: ModelMessage[] = [];
 
     if (chatId) {
       chat = await this.chatModel.findById(chatId).exec();
       if (!chat) {
-        throw new Error (`No se encontró el chat con ID ${chatId}`);
+        throw new Error(`No se encontró el chat con ID ${chatId}`);
       }
     }
 
-    const responseObj = await handler.getResponse(chatId, message, model);
-    const response = responseObj.response;
-    chatId = responseObj.chatId;
+    if (chat) {
+      messages = chat.messages.map((message) => ({
+        role: message.sender === Sender.USER ? 'user' : 'assistant',
+        content: message.text,
+      }));
+    } else {
+      messages = [
+        {
+          role: 'user',
+          content: message.text,
+        },
+      ];
+    }
+
+    const response = await generateText({
+      model: this.openRouter(model),
+      messages,
+    });
+
+    const timestamp = Date.now();
+    const responseMessage: Message = {
+      _id: `${timestamp}_ai`,
+      sender: Sender.AI,
+      text: response.text,
+      timestamp,
+    };
 
     if (!chat) {
-      const messages = [message, response];
-      const newId = generateId(chatType, chatId);
-      const newChat = await this.createChat(newId, userId, messages, model)
+      const messages = [message, responseMessage];
+      const newId = new mongoose.Types.ObjectId().toString();
+      const newChat = await this.createChat(newId, messages, model);
 
       return {
         newChatId: newChat._id,
         newChatTitle: newChat.title,
-        response,
-      }
+        response: responseMessage,
+      };
     }
 
-    await this.updateChatMessages(chatId, userId, [message, response]);
+    await this.updateChatMessages(chatId!, [message, responseMessage]);
 
     return {
       newChatId: '',
       newChatTitle: '',
-      response,
-    }
-
+      response: responseMessage,
+    };
   }
 }

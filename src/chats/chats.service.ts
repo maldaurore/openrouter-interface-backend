@@ -42,14 +42,14 @@ export class ChatsService {
       content: message.text,
     }));
     inputMessages.unshift({
-      role: 'system',
-      content: `Basado en estos mensajes del inicio de una conversación entre una persona y un chatbot, genera un breve título de máximo 8 palabras que represente el tema principal. 
+      role: 'user',
+      content: `Basado en estos mensajes del inicio de una conversación entre una persona y un chatbot, genera un breve título de máximo 6 palabras que represente el tema principal. 
       No uses comillas ni signos de puntuación innecesarios.
       Responde solo con el título sugerido.`,
     });
 
     const result = await generateText({
-      model: this.openRouter('qwen/qwen3-30b-a3b-thinking-2507'),
+      model: this.openRouter('qwen/qwen3-8b:free'),
       messages: inputMessages,
     });
 
